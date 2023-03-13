@@ -1,2 +1,2 @@
 # School
-Random School Stuff
+I just want to be able to access it from anywhere
