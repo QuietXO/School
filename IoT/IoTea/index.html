@@ -1,0 +1,125 @@
+<html>
+<head>
+    <title>Tea Maker v0.1</title>
+    <link rel="stylesheet" href="images/styles.css">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/3.0.1/mustache.min.js"></script>
+</head>
+<body>
+
+<div id="content"></div>
+<div id="div_checkbox">
+    <input type="checkbox" id="checkbox">
+    <label for="checkbox">Auto refresh data...</label>
+</div>
+
+<script id="template" type="text/template">
+    <section>
+        <h1 class="center">Tea Maker v0.1</h1>
+        <p>Name: {{name}}</p>
+        <p>Type: {{type}}</p>
+    </section>
+    <section>
+        <h2>Current stats:</h2>
+        <div class="row">
+            <div class="div50">
+                <div class="stats">
+                    <span class="dot {{background_tPlaced}}"></span>
+                    <label>Teapot Placed</label>
+                </div>
+            </div>
+            <div class="div50">
+                <div class="stats">
+                    <span class="dot {{background_minFluid}}"></span>
+                    <label>Minfluid</label>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="div50">
+                <div class="stats">
+                    <span class="dot {{background_heater}}"></span>
+                    <label>Heater</label>
+                </div>
+            </div>
+            <div class="div50">
+                <div class="stats">
+                    <span class="dot {{background_valve}}"></span>
+                    <label>Valve</label>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="div50">
+                <div class="stats2">
+                    <span class="dot2 {{background_tReady}}"></span>
+                    <label style="font-size: 1.4em;">Tea Ready</label>
+                </div>
+            </div>
+            <div class="div50">
+                <div class="stats2">
+                    <span class="dot2 {{background_temperature}}"></span>
+                    <label style="font-size: 1.4em;">Temp: {{temperature}} &#8451</label>
+                </div>
+                <br>
+            </div>
+        </div>
+        <br style="clear: both">
+    </section>
+    {{#hintText}}
+    <section>
+        <h2>Hints: </h2>
+        <p style="padding: 0 35px; word-break: break-word;">{{hintText}}</p>
+    </section>
+    {{/hintText}}
+</script>
+
+<script>
+    // nacitanie dat a vlozenie do stranky
+    function loadData(firstRun = false) {
+        // ak mame vypnuty reloading, tak nenacitavame
+        if (firstRun === false && !document.getElementById('checkbox').checked) return;
+
+        // url odkial tahame data
+        const url = "getParameters.php";
+
+        function reqListener() {
+            // stiahnuty text
+            if (this.status === 200) {
+                let responseJSON = JSON.parse(this.responseText);
+                let temperature = responseJSON['temperature'];
+                // nastavime farbu ikonky (class) pre stav 0 (cervena) a 1 (zelena)
+                ['tPlaced', 'minFluid', 'heater', 'valve', 'tReady'].forEach(function (parameter) {
+                    responseJSON['background_' + parameter] = responseJSON[parameter] == 1 ? 'bg_green' : 'bg_red';
+                });
+                // nastavime farbu ikonky (class) podla teploty
+                if (temperature >= 80) {
+                    responseJSON.background_temperature = "bg_red";
+                } else if (temperature >= 50) {
+                    responseJSON.background_temperature = "bg_orange";
+                } else {
+                    responseJSON.background_temperature = "bg_lightblue";
+                }
+                // updatneme data na obrazovke
+                document.getElementById('content').innerHTML = Mustache.render(
+                    document.getElementById('template').innerHTML,
+                    responseJSON
+                )
+            } else {
+                alert("Error while loading data...");
+            }
+        }
+
+        // vytvor a vykonaj http request na ziskanie dat
+        var ajax = new XMLHttpRequest();
+        ajax.addEventListener("load", reqListener);
+        ajax.open("GET", url, true);
+        ajax.send();
+    }
+
+    // nacitaj data
+    loadData(true);
+    // nacitavaj data kazdych 500ms
+    setInterval(loadData, 500);
+</script>
+</body>
+</html>
