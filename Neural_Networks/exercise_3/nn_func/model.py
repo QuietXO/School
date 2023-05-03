@@ -333,8 +333,8 @@ class SigmoidModel3(nn.Module):
 
     def forward(self, x):
         x = x.view(-1, self.flattened)
-        x = torch.nn.functional.relu(self.fc1(x))
-        x = torch.nn.functional.relu(self.fc2(x))
+        x = torch.nn.functional.sigmoid(self.fc1(x))
+        x = torch.nn.functional.sigmoid(self.fc2(x))
         x = self.fc3(x)
         return x
 
@@ -354,7 +354,7 @@ class TanhModel3(nn.Module):
 
     def forward(self, x):
         x = x.view(-1, self.flattened)
-        x = torch.nn.functional.relu(self.fc1(x))
-        x = torch.nn.functional.relu(self.fc2(x))
+        x = torch.nn.functional.tanh(self.fc1(x))
+        x = torch.nn.functional.tanh(self.fc2(x))
         x = self.fc3(x)
         return x
