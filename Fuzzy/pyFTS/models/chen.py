@@ -73,7 +73,7 @@ class ConventionalFTS(fts.FTS):
                 ret.append(actual.centroid)
 
                 if explain:
-                    print("Rules:\n\n {} -> {} (Naïve)\t Midpoint: {}  \n\n".format(actual.name, actual.name,actual.centroid))
+                    print("Rules:\n\n {} -> {} (Naïve)\t Midpoint: {}  \n\n".format(actual.name, actual.name, actual.centroid))
 
             else:
                 _flrg = self.flrgs[actual.name]
