@@ -1,0 +1,1 @@
+You will need libraries from requirements.txt and at least .NET 6.0 installed
